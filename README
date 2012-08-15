@@ -1,35 +1,24 @@
-Project Skeleton for the test_disco app.
+This code is the simplest test case to reproduce https://github.com/basho/webmachine/issues/82 .
 
-You should find in this directory:
+Compile and start the app, then run curl:
 
-README : this file
-Makefile : simple make commands
-rebar : the Rebar build tool for Erlang applications
-rebar.config : configuration for Rebar
-start.sh : simple startup script for running test_disco
-/ebin
-  /test_disco.app : the Erlang app specification
-/src
-  /test_disco_app.erl : base module for the Erlang application
-  /test_disco_sup.erl : OTP supervisor for the application
-  /test_disco_resource.erl : a simple example Webmachine resource
-/priv
-  /dispatch.conf : the Webmachine URL-dispatching table
-  /www : a convenient place to put your static web content
+curl -v -X DELETE -d "0" -H "Transfer-Encoding: chunked" -H "Content-type: application/json" -H "Connection: keep-alive" http://localhost:8000/ http://localhost:8000/ http://localhost:8000/ http://localhost:8000/ 
 
-You probably want to do one of a couple of things at this point:
+You will see most requests produce this:
 
-0. Build the skeleton application:
-   $ make
-   - or -
-   $ ./rebar compile
+* Connection #0 to host localhost left intact
+* Connection #0 seems to be dead!
+* Closing connection #0
 
-1. Start up the skeleton application:
-   $ ./start.sh
+And some will produce:
 
-2. Change the basic application:
-   edit src/test_disco_resource.erl
+* Recv failure: Connection reset by peer
+* Connection died, retrying a fresh connect
+* Closing connection #0
 
-3. Add some new resources:
-   edit src/YOUR_NEW_RESOURCE.erl
-   edit priv/dispatch.conf
+Or
+
+* Connection died, retrying a fresh connect
+* Closing connection #0
+
+In no case will there be an error returned or anything on the app console or in the log.
